@@ -18,15 +18,32 @@
             body.appendChild(canvas);
             return canvas;
         }
-        function getData() {
-            let [start, end] = [0, Math.floor(Math.random() * 20)];
-            while (start++ < end) {
-                console.info(start, end);
+        function* getData(to, max = 100) {
+            let [current, end] = [0, Math.floor(Math.random() * (to || 20))];
+            
+            while (current++ < end) {
+                yield Math.floor(Math.random() * max);
             }
         }
+        
 
         const context = initCanvas().getContext('2d');
-        const data = getData();
+        const data = [...getData(15, max=25)];
+        const scale = d3.scaleLinear().range([10, 390])
+                                      .domain(
+                                          [Math.min(...data), 
+                                            Math.max(...data)]);
         
+        for (const d of data) {
+            console.log(d, scale(d));
+            context.beginPath();
+            context.rect(scale(d), 15, 10, 10);
+            context.fillStyle = 'red';
+            context.fill();
+            context.closePath();
+        }
+
+        
+        console.info(`Context: ${context}, data: ${data}, type: ${typeof data}`);
     </script>
 </html>
